@@ -1,0 +1,244 @@
+{{extend 'layout.html'}}
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+</head>
+<h1>Cruzin'</h1>
+
+{{if auth.user_id is None:}}
+{{=A('Log In', _class="btn btn-primary", _href=URL('default', 'user', args=['login']))}}
+{{=A('Sign Up', _class="btn btn-default", _href=URL('default', 'user', args=['register']))}}
+
+{{else:}}
+ {{pass}}
+<div id="header">
+  <a href="#" id="menu-trigger">Menu<span class="arrow"></span></a>
+ 
+  <div id="menu">
+ 
+    <div class="column">
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="blah.html">Forum</a></li>
+        <li><a href="newprofile.html">Create a Profile</a></li>
+        <li><a href="home.html">Messages</a></li>
+        <li><a href="review.html">Leave a Review</a></li>
+      </ul>
+    </div>
+    <!--/.column-->
+    </div>
+</div>
+
+</div id="body">
+        <div id="floating-panel">
+            <input id="address" type="textbox" value="Please enter a location">
+            <input id="submit" type="button" value="Search">
+        </div>
+        <div id="map"></div>
+            <label id="checkRadius">Distance: </label>
+            5 miles <input type="radio" name="radiusBtns" id="radioBtn1" onclick="calcRadius(8046);" value="5" checked/>
+            10 miles <input type="radio" name="radiusBtns"  id="radioBtn2" onclick="calcRadius(16093);" value="10" />
+            3000 miles <input type="radio" name="radiusBtns"  id="radioBtn3" onclick="calcRadius(4828032);" value="3000" />
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	// build a variable to target the #menu div
+	var menu = $('#menu')
+	// bind a click function to the menu-trigger
+	$('#menu-trigger').click(function(event){
+		event.preventDefault();
+		// if the menu is visible slide it up
+		if (menu.is(":visible"))
+		{
+			menu.slideUp(400);
+			$(this).removeClass("open");
+		}
+		// otherwise, slide the menu down
+		else
+		{
+			menu.slideDown(400);
+			$(this).addClass("open");
+		}
+	});
+});
+</script>
+
+
+
+<script type="text/javascript">
+
+var directionsDisplay ;
+var directionsService ;
+var geocoder;
+var map_pin ;
+var drivers = ['san francisco', 'new york'];
+var map;
+var map_radius;
+var pre_radius = 8046;
+var Markers = [];
+
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 12,
+    center: {lat: 37.000449, lng: -122.063211  },
+    <!--pre_radius: 8046;-->
+  });
+
+    function initialize() {
+    var mapCanvas = document.getElementById('map');
+    var map = new google.maps.Map(mapCanvas);
+  }
+
+
+var default_marker = new google.maps.Marker({
+        });
+    map_pin = default_marker;
+
+  map.addListener('click', function(e) {
+    placeMarkerAndPanTo(e.latLng, map);
+  });
+
+var default_radius = new google.maps.Circle({
+        });
+    map_radius = default_radius;
+
+directionsDisplay = new google.maps.DirectionsRenderer;
+directionsService = new google.maps.DirectionsService;
+geocoder = new google.maps.Geocoder();
+
+  document.getElementById('submit').addEventListener('click', function() {
+    var address = document.getElementById('address').value;
+      geocoder.geocode({'address': address}, function (results, status) {
+          if (status === google.maps.GeocoderStatus.OK) {
+                  placeMarkerAndPanTo(results[0].geometry.location, map);
+          }
+      });
+  });
+
+}
+
+function calcRadius(radiusVal) {
+    pre_radius = radiusVal;
+
+}
+
+
+//Reference from google api example:
+//https://developers.google.com/maps/documentation/javascript/examples/geocoding-simple
+function geocodeMarker(geocoder, resultsMap, address) {
+    geocoder.geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            var marker = new google.maps.Marker({
+                map: resultsMap,
+                position: results[0].geometry.location,
+                animation: google.maps.Animation.DROP
+            });
+            Markers.push(marker);
+               var start = address.replace(/ /g,"_");
+               var dest = "santa_cruz";
+               var contentString = "drive to santa cruz, any question please contact xxx-xxx-xxxx<br>" +
+                                    "<input type='button' onClick = getDir('"+ start + "','" +
+                                    dest + "') value='Get direction'>";
+               var infowindow = new google.maps.InfoWindow({
+                   content: contentString,
+                   maxWidth: 250
+                });
+
+             marker.addListener('click', function() {
+                 infowindow.open(resultsMap, marker);
+                });
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
+}
+
+    function placeMarkerAndPanTo(latLng, map) {
+        map_pin.setMap(null);
+        clearMarkers();
+        var marker = new google.maps.Marker({
+            position: latLng,
+            map: map,
+            animation: google.maps.Animation.DROP,
+            draggable: true,
+            zoom: 12,
+            icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
+        });
+        map_pin = marker;
+        map.setZoom(12);
+        map.panTo(latLng);
+
+        map_radius.setMap(null);
+
+        //add a radius effect to signify the drivers nearby
+        var circle = new google.maps.Circle({
+        map: map,
+        radius: pre_radius,    // radius given from button
+        fillColor: '#AA0000',
+        visible: false
+    });
+
+        circle.bindTo('center', marker, 'position');
+        map_radius = circle;
+
+        for (var i = 0;i < drivers.length;++i){
+            isDriverInArea(circle, drivers[i]);
+        }
+        google.maps.event.addListener(marker, 'dragend', function(event) {
+            clearMarkers();
+            for (var i = 0;i < drivers.length;++i){
+                isDriverInArea(circle, drivers[i]);
+            }
+        });
+    }
+
+
+    function getDir(address, destination){
+        directionsDisplay.setMap(map);
+        calculateAndDisplayRoute(address, destination);
+    }
+
+function calculateAndDisplayRoute(address, destination) {
+  directionsService.route({
+    //origin:"san francisco"  ,
+    origin: address,
+    //destination: "San Jose",  // Ocean Beach.
+    destination: destination,
+    travelMode: google.maps.TravelMode.DRIVING
+  }, function(response, status) {
+    if (status == google.maps.DirectionsStatus.OK) {
+      directionsDisplay.setDirections(response);
+    } else {
+      window.alert('Directions request failed due to ' + status);
+    }
+  });
+}
+
+function isDriverInArea(circle, address){
+        geocoder.geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            if(circle.getBounds().contains(results[0].geometry.location)) {
+                geocodeMarker(geocoder, map, address);
+            }
+        }
+    });
+
+};
+//reference from google map api
+function setMapOnAll(map) {
+  for (var i = 0; i < Markers.length; i++) {
+    Markers[i].setMap(map);
+  }
+}
+
+function clearMarkers() {
+  setMapOnAll(null);
+  Markers = [];
+}
+
+
+</script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAE4Nm9XQIkuN-STWQgsjzbD0wklLzFJc&callback=initMap"
+    async defer>
+</script>

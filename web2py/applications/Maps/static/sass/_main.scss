@@ -1,0 +1,55 @@
+.colorful {
+  color: $clrHilight;
+}
+
+#main_login{
+  text-align:center;
+}
+
+#main_board{
+  padding: 20px;
+  @include background-image(linear-gradient(lighten($clrListBg, 10%), $clrListBg));
+  margin: 10px;
+  @include border-radius(20px);
+  border: 1px solid $clrText;
+  @include box-shadow(rgba(#000,0.7) 0 4px 10px 2px);
+  display: inline-block;
+  width: 350px;
+}
+
+#icon{
+  text-align: right;
+}
+.description{
+  font-size: 150%;
+}
+.BOARD{
+  font-size: 250%;
+}
+
+.time{
+  font-size: 75%;
+  color: #cc9933;
+  text-align:center;
+}
+
+#map-canvas { height: 500px; width: 100% }
+
+#map {
+  height: 50%;
+  width: 50%;
+}
+
+#floating-panel {
+  position: absolute;
+  top: 10px;
+  left: 25%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+  padding-left: 10px;
+}

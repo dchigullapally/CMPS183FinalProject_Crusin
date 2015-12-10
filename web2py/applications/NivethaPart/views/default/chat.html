@@ -1,0 +1,6 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+<h1>Contact a Driver</h1>
+{{=A('Home', _class='btn btn-primary', _href=URL('default','home',args=[auth.user_id]))}}
+{{=form}}
