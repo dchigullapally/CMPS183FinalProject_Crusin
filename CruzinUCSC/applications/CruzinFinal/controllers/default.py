@@ -4,6 +4,7 @@
 from gluon import utils as gluon_utils
 import time
 from gluon.serializers import json
+from gluon.tools import geocode
 
 def index():
     """
@@ -19,8 +20,10 @@ def index():
     #elif type(blank_list) is str:
     #    blank_list = [blank_list]
     #rows = db(~db.profile.profile_id.belongs(blank_list)).select(db.profile.ALL, orderby=~db.profile.created_on)
-    d = [{'profile_Fname': r.first_name,'profile_Lname': r.last_name, 'profile_address': r.Address, 'profile_car': r.Own_a_Car, 'profile_driving_experience':r.Driving_Experience, 'profile_pic':r.Profile_pic,}
-         for r in profiles]
+    d =[]
+    for r in profiles:
+        location = geocode(r.Address)
+        d = d + [{'profile_Fname': r.first_name,'profile_Lname': r.last_name, 'profile_address': r.Address, 'profile_car': r.Own_a_Car, 'profile_driving_experience':r.Driving_Experience, 'profile_pic':r.Profile_pic, 'lat': location[0], 'lng': location[1]}]
     return dict(profile_dict=json(d),add_dict=profiles)
 
 
