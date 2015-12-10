@@ -1,5 +1,0 @@
-<h1>Create a Profile</h1>
-{{=A('Home', _class='btn btn-primary', _href=URL('default','index'))}}
-{{=A('View', _class='btn btn-primary', _href=URL('default','view'))}}
-{{extend 'layout.html'}}
-{{=form}}

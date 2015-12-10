@@ -1,9 +1,0 @@
-{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
-{{extend 'layout.html'}}
-<!-- Testing Chat Functionality, will remove button after it works -->
-{{=A('Email', _class='btn btn-primary', _href=URL('default','chat', args=[auth.user_id]))}}
-{{=A('Home', _class='btn btn-primary', _href=URL('default','index'))}}
-<h1>Contact a Driver</h1>
-
-
-{{=form}}
