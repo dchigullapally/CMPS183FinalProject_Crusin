@@ -53,7 +53,7 @@
             <label id="checkRadius">Distance: </label>
             5 miles <input type="radio" name="radiusBtns" id="radioBtn1" onclick="calcRadius(8046);" value="5" checked/>
             10 miles <input type="radio" name="radiusBtns"  id="radioBtn2" onclick="calcRadius(16093);" value="10" />
-            3000 miles <input type="radio" name="radiusBtns"  id="radioBtn3" onclick="calcRadius(4828032);" value="3000" />
+            25 miles <input type="radio" name="radiusBtns"  id="radioBtn3" onclick="calcRadius(40233);" value="25" />
 </div>
 
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
@@ -140,12 +140,10 @@ function calcRadius(radiusVal) {
 
 //Reference from google api example:
 //https://developers.google.com/maps/documentation/javascript/examples/geocoding-simple
-function geocodeMarker(geocoder, resultsMap, address, driver) {
-    geocoder.geocode({'address': address}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
+function geocodeMarker(geocoder, resultsMap, address, driver,location) {
             var marker = new google.maps.Marker({
                 map: resultsMap,
-                position: results[0].geometry.location,
+                position: location,
                 animation: google.maps.Animation.DROP
             });
             Markers.push(marker);
@@ -164,10 +162,6 @@ function geocodeMarker(geocoder, resultsMap, address, driver) {
              marker.addListener('click', function() {
                  infowindow.open(resultsMap, marker);
                 });
-        } else {
-            alert('Geocode was not successful for the following reason: ' + status);
-        }
-    });
 }
 
     function placeMarkerAndPanTo(latLng, map) {
@@ -198,7 +192,7 @@ function geocodeMarker(geocoder, resultsMap, address, driver) {
         circle.bindTo('center', marker, 'position');
         map_radius = circle;
 
-        for (var i = 0;i < drivers.length;++i){
+        for (var i = 0;i < drivers.length;i++){
             isDriverInArea(circle, drivers[i].profile_address,drivers[i]);
         }
         google.maps.event.addListener(marker, 'dragend', function(event) {
@@ -234,14 +228,10 @@ function calculateAndDisplayRoute(address,destination) {
 }
 
 function isDriverInArea(circle, address,driver){
-        geocoder.geocode({'address': address}, function (results, status) {
-        if (status === google.maps.GeocoderStatus.OK) {
-            if(circle.getBounds().contains(results[0].geometry.location)) {
-                geocodeMarker(geocoder, map, address,driver);
+        var Locations = new google.maps.LatLng(driver.lat,driver.lng);
+            if(circle.getBounds().contains(Locations)) {
+                geocodeMarker(geocoder, map, address,driver,Locations);
             }
-        }
-    });
-
 };
 //reference from google map api
 function setMapOnAll(map) {
