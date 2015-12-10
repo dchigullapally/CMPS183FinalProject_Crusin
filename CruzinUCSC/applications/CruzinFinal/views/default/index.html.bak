@@ -1,0 +1,116 @@
+{{extend 'layout.html'}}
+<h1>Cruzin'</h1>
+{{if auth.user_id is None:}}
+{{=A('Log In', _class="btn btn-primary", _href=URL('default', 'user', args=['login']))}}
+{{=A('Sign Up', _class="btn btn-default", _href=URL('default', 'user', args=['register']))}}
+
+{{else:}}
+ {{pass}}
+<div id="header">
+  <a href="#" id="menu-trigger">Menu<span class="arrow"></span></a>
+ 
+  <div id="menuk">
+ 
+    <div class="column">
+      <ul>
+        <li><a href="about.html">About Us</a></li>
+        <li><a href="blah.html">Forum</a></li>
+        <li><a href="newprofile.html">Create a Profile</a></li>
+        <li><a href="home.html">Messages</a></li>
+        <li><a href="review.html">Leave a Review</a></li>
+      </ul>
+    </div>
+    <!--/.column-->
+    </div>
+</div>
+
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+	// build a variable to target the #menu div
+	var menu = $('#menu')
+	// bind a click function to the menu-trigger
+	$('#menu-trigger').click(function(event){
+		event.preventDefault();
+		// if the menu is visible slide it up
+		if (menu.is(":visible"))
+		{
+			menu.slideUp(400);
+			$(this).removeClass("open");
+		}
+		// otherwise, slide the menu down
+		else
+		{
+			menu.slideDown(400);
+			$(this).addClass("open");
+		}
+	});
+});
+</script>
+
+<script>
+
+var drivers = ['san francisco', 'new york'];
+
+  var map;
+function initMap() {
+    map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 4,
+    center: {lat:40, lng:-100 }
+  });
+
+  map.addListener('click', function(e) {
+    placeMarkerAndPanTo(e.latLng, map);
+  });
+
+  var geocoder = new google.maps.Geocoder();
+
+  for (var i = 0;i < drivers.length;++i){
+        geocodeMarker(geocoder, map, drivers[i]);
+    }
+
+  document.getElementById('submit').addEventListener('click', function() {
+    var address = document.getElementById('address').value;
+    geocodeAddress(geocoder, map, address);
+  });
+
+}
+//Reference from google api example:
+//https://developers.google.com/maps/documentation/javascript/examples/geocoding-simple
+function geocodeAddress(geocoder, resultsMap, address) {
+    geocoder.geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            resultsMap.setCenter(results[0].geometry.location);
+            var marker = new google.maps.Marker({
+                map: resultsMap,
+                position: results[0].geometry.location
+            });
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
+}
+
+function geocodeMarker(geocoder, resultsMap, address) {
+    geocoder.geocode({'address': address}, function (results, status) {
+        if (status === google.maps.GeocoderStatus.OK) {
+            var marker = new google.maps.Marker({
+                map: resultsMap,
+                position: results[0].geometry.location
+            });
+        } else {
+            alert('Geocode was not successful for the following reason: ' + status);
+        }
+    });
+}
+
+    function placeMarkerAndPanTo(latLng, map) {
+        var marker = new google.maps.Marker({
+            position: latLng,
+            map: map
+        });
+        map.panTo(latLng);
+    }
+    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCAE4Nm9XQIkuN-STWQgsjzbD0wklLzFJc&callback=initMap"
+    async defer></script>
