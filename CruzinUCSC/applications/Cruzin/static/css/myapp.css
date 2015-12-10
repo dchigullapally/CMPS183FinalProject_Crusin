@@ -124,23 +124,39 @@ p {
   padding-left: 20px;
 }
 
-#map-canvas { height: 500px; width: 100% }
+#map-canvas {
+  height: 500px;
+  width: 100%;
+}
 
 #map {
+  position: relative;
+  top: -20px;
   height: 500px;
-  width: 80%;
+}
+
+#mapBody {
+  height: 70%
+  position: relative;
+  padding: 10px;
+  top: 50px;
+  padding-left: 330px;
+  padding-right: 75px;
 }
 
 #floating-panel {
-  position: absolute;
-  top: 10px;
+  position: relative;
+  top: 5px;
   left: 25%;
   z-index: 5;
-  background-color: #fff;
+  background-color: rgba(0,0,0,.0001);
   padding: 5px;
-  border: 1px solid #999;
+  border: none;
   text-align: center;
   font-family: 'Roboto','sans-serif';
   line-height: 30px;
   padding-left: 10px;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  width: 300px;
 }
