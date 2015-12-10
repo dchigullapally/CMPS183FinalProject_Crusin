@@ -59,6 +59,11 @@ db.profile.Own_a_Car.requires = IS_IN_SET(CAR)
 db.profile.Own_a_Car.default = 'Yes'
 db.profile.Own_a_Car.required = True
 
+db.auth_user.Driving_Experience.requires = IS_INT_IN_RANGE(0, 50, error_message='The years of experience should be in the range 0...50')
+db.auth_user.Own_a_Car.requires = IS_IN_SET(CAR)
+db.auth_user.Own_a_Car.default = 'Yes'
+db.auth_user.Own_a_Car.required = True
+db.auth_user.Profile_pic.requires = IS_EMPTY_OR(IS_IMAGE(error_message="Oops! That's not an image file."))
 db.define_table('email',
                 Field('sender', db.auth_user),
                 Field('receiver', db.auth_user),

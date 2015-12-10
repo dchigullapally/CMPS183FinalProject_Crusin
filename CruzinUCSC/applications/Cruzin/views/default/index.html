@@ -5,11 +5,25 @@
 <h1>Cruzin'</h1>
 
 {{if auth.user_id is None:}}
-{{=A('Log In', _class="btn btn-primary", _href=URL('default', 'user', args=['login']))}}
-{{=A('Sign Up', _class="btn btn-default", _href=URL('default', 'user', args=['register']))}}
+<div id="header">
+  <a href="#" id="menu-trigger">Menu</a>
+
+  <div id="menu">
+
+    <div class="column">
+      <ul>
+        <li><a href="user.html">Login</a></li>
+        <li><a href="user.html/register">Sign Up</a></li>
+        <li><a href="about.html">About Us</a></li>
+      </ul>
+    </div>
+    <!--/.column-->
+    </div>
+</div>
+
+
 
 {{else:}}
- {{pass}}
 <div id="header">
   <a href="#" id="menu-trigger">Menu<span class="arrow"></span></a>
  
@@ -17,9 +31,10 @@
  
     <div class="column">
       <ul>
+        <li><a href="user.html/logout">Log Out</a></li>
         <li><a href="about.html">About Us</a></li>
         <li><a href="blah.html">Forum</a></li>
-        <li><a href="newprofile.html">Create a Profile</a></li>
+        <li><a href="view.html">View Profile</a></li>
         <li><a href="home.html">Messages</a></li>
         <li><a href="review.html">Leave a Review</a></li>
       </ul>
@@ -27,6 +42,7 @@
     <!--/.column-->
     </div>
 </div>
+{{pass}}
 
 </div id="body">
         <div id="floating-panel">

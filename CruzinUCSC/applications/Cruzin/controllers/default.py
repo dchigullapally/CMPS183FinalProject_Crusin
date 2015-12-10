@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- coding: utf-8 # -*- coding: utf-8 -*-
 # this file is released under public domain and you can use without limitations
 
 from gluon import utils as gluon_utils
@@ -29,10 +29,27 @@ def view():
     """View profile."""
     response.flash = T("User Profile")
     form = ''
-    something = db(db.profile.creator == auth.user_id).select().first()
+    something = db(db.auth_user.id == auth.user_id).select().first()
     url = URL('download')
-    form = SQLFORM(db.profile, record = something, readonly=True, upload=url)
+    form = SQLFORM(db.auth_user, record = something, readonly=True, upload=url)
     return dict(something=something, form=form)
+
+#EDIT PROFILE
+def editprofile():
+    return dict(form=auth.profile())
+
+@auth.requires_login()
+@auth.requires_signature()
+def edit():
+    p = db.auth_user(request.args(0)) or redirect(URL('default', 'index'))
+    if p.user_id != auth.user_id:
+        session.flash = T('Not authorized.')
+        redirect(URL('default', 'index'))
+    profile = SQLFORM(db.auth_user, record=p)
+    if profile.process().accepted:
+        session.flash = T('Updated')
+        redirect(URL('default', 'index'))
+    return dict(profile=profile)
 
 #ABOUT US PAGE
 def about():
@@ -57,20 +74,6 @@ def modify():
     #return dict(form=auth.profile(edit= False))
     form = db.profile
     return dict(form=form)
-
-@auth.requires_login()
-@auth.requires_signature()
-def edit():
-    """Edit profile."""
-    p = db.profile(request.args(0)) or redirect(URL('default', 'index'))
-    if p.user_id != auth.user_id:
-        session.flash = T('Not authorized.')
-        redirect(URL('default', 'index'))
-    profile = SQLFORM(db.profile, record=p)
-    if profile.process().accepted:
-        session.flash = T('Updated')
-        redirect(URL('default', 'index'))
-    return dict(profile=profile)
 
 #EMAIL HOME
 def home():
@@ -156,6 +159,7 @@ def add_post():
                              post_content=request.vars.post_content,
                              post_parent=request.vars.post_parent)
     return "ok"
+
 
 @auth.requires_signature()
 def delete_post():

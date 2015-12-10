@@ -1,6 +1,7 @@
 {{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
 {{extend 'layout.html'}}
 {{=A('Home', _class='btn btn-primary', _href=URL('default','index'))}}
+{{=A('Edit', _class='btn btn-primary', _href=URL('default','user', args=['profile']))}}
 <h1 align="center">Profile</h1>
 
 <style type="text/css">
@@ -79,10 +80,13 @@
     <div id="Info">
 
         <p>
-            <strong>Full Name</strong>
-            <span>{{=something.Name}}</span>
+            <strong>First Name</strong>
+            <span>{{=something.first_name}}</span>
         </p>
-
+        <p>
+            <strong>Last Name</strong>
+            <span>{{=something.last_name}}</span>
+        </p>
         <p>
             <strong>Address</strong>
             <span>{{=something.Address}}</span>
@@ -92,7 +96,7 @@
             <span>{{=something.Own_a_Car}}</span>
         </p>
         <p>
-            <strong>Driving Experience</strong>
+            <strong>Driving Experience(in years)</strong>
             <span>{{=something.Driving_Experience}}
                </span>
         </p>

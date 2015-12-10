@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-
-#########################################################################
-## This scaffolding model makes your app work on Google App Engine too
-## File is released under public domain and you can use without limitations
-#########################################################################
-
 ## if SSL/HTTPS is properly configured and you want all HTTP requests to
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
@@ -57,9 +50,20 @@ auth = Auth(db)
 service = Service()
 plugins = PluginManager()
 
+CAR = ['Yes', 'No']
+auth.settings.extra_fields['auth_user']= [
+                Field('Address'),
+                Field('Own_a_Car'),
+                Field('Driving_Experience'),
+                Field('Profile_pic', 'upload'),]
 ## create all tables needed by auth if not custom tables
-auth.define_tables(username=False, signature=False)
 
+auth.define_tables()
+
+#auth.define_tables(username=False, signature=False)
+
+
+auth.define_tables(username=True)
 ## configure email
 mail = auth.settings.mailer
 mail.settings.server = 'logging' if request.is_local else myconf.take('smtp.server')
